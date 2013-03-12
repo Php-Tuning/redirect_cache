@@ -4,7 +4,8 @@ redirect_cache
 redirect Cache Class for PHP
 
 Autor Andreas Höhne
-      Webdesign Höhne
+
+      www.webdesign-hoehne.de
 
 
 Install:
