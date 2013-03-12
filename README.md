@@ -1,10 +1,9 @@
 redirect_cache
 ==============
 
-redirect Cache Class for PHP
+Redirect Cache Class for PHP
 
-Autor Andreas Höhne
-
+      Autor: Andreas Höhne
       www.webdesign-hoehne.de
 
 
