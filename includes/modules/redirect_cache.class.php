@@ -10,9 +10,9 @@
  * Aufruf:
  include ('includes/modules/redirect_cache.class.php');
  $redirect_cache = new redirect_cache;
- $redirect_cache->cache_folder = 'writeperm/redirect_cache/';
- $redirect_cache->cache_time = 60*60*24;
- #$redirect_cache->debug = 1;
+ $redirect_cache->set_cache_folder('writeperm/redirect_cache/');
+ $redirect_cache->set_cache_time(60*60*24);
+ #$redirect_cache->set_debug(1);
  $redirect_cache->do_redirect();
 
  * Cache schreiben:
@@ -21,38 +21,70 @@
  */
 
 class redirect_cache {
-	var $cache_folder;
-	var $request_domain;
-	var $request_path;
-	var $request_hash_subfolder;
-	var $request_hash_filename;
-	var $cachefile;
-	var $cache_time = 2678400; // Standard 31 Tage
-	var $redirect_type = 'permanent';
-	var $debug = 0;
-	var $hash_requested = FALSE;
+	private $defect = 0;
+	private $cache_folder;
+	private $request_domain;
+	private $request_path;
+	private $request_hash_subfolder;
+	private $request_hash_filename;
+	private $cachefile;
+	private $cache_time;
+	private $redirect_type = 'permanent';
+	private $debug = 0;
+	private $hash_requested = FALSE;
 
     function redirect_cache() {
     	$this->request_domain = $_SERVER['SERVER_NAME'];
     	$this->request_path = $_SERVER['REQUEST_URI'];
+    	$this->set_debug();
+    	$this->set_cache_folder();
+    	$this->set_cache_time();
+    	$this->set_redirect_type();
     }
 
-    function critical_error(){
-    	die('Kritischer Umleitungsfehler, bitte besuchen Sie unsere Hauptseite: ' .
-    	'<a href="http://'.$_SERVER['SERVER_NAME'].'/">'.$_SERVER['SERVER_NAME'].'</a>');
+    function set_debug($debug = 0){
+    	$this->debug = $debug;
+    }
+
+    function set_cache_folder($folder = 'writeperm/redirect_cache/'){
+    	if (is_dir($folder)){
+    		// 2do right check
+    		$this->cache_folder = $folder;
+    	}else{
+    		$this->defect = 1;
+    	}
+    }
+
+    function set_cache_time($cachetime = 2678400){
+    	$this->cache_time = $cachetime;
+    }
+
+    function set_redirect_type($redirect_type = 'permanent'){
+    	$this->redirect_type = $redirect_type;
+    }
+
+    function critical_error($type='redir'){
+    	if ($this->debug == 1){
+    		if ($type == 'redir'){
+    			die('Kritischer Umleitungsfehler, bitte besuchen Sie unsere Hauptseite: ' .
+    			'<a href="http://'.$_SERVER['SERVER_NAME'].'/">'.$_SERVER['SERVER_NAME'].'</a>');
+    		}
+    	}
     }
 
     function write_cache($target){
-    	$this->request_hash();
-    	if ($target != 'http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']){
-    		if (!is_dir($this->cache_folder.$this->request_hash_subfolder)){
-	    		mkdir($this->cache_folder.$this->request_hash_subfolder);
+    	if ($this->defect != 1){
+    		$this->request_hash();
+	    	if ($target != 'http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']){
+	    		if (!is_dir($this->cache_folder.$this->request_hash_subfolder)){
+		    		mkdir($this->cache_folder.$this->request_hash_subfolder);
+		    	}
+		    	$f = fopen($this->cachefile, 'w');
+				fwrite($f, $target);
+				fclose($f);
+	    	}else{
+	    		$this->critical_error();
 	    	}
-	    	$f = fopen($this->cachefile, 'w');
-			fwrite($f, $target);
-			fclose($f);
-    	}else{
-    		$this->critical_error();
     	}
     }
 
@@ -91,20 +123,22 @@ class redirect_cache {
     }
 
     function do_redirect(){
-    	$this->request_hash();
-    	if ($this->check_file() == TRUE){
-    		$target_url = $this->read_file();
-    		if ($target_url != ''){
-    			if ($this->redirect_type == 'permanent' || $this->redirect_type == 301){
-		    		header("HTTP/1.1 301 Moved Permanently");
-		    	}
-			    header("Location: ".$target_url);
-			    die();
-    		}else{
-    			$this->critical_error();
-    		}
-    	}else{
-    		#if ($this->debug==1)die('Check_File stimmt nicht');
+    	if ($this->defect != 1){
+    		$this->request_hash();
+	    	if ($this->check_file() == TRUE){
+	    		$target_url = $this->read_file();
+	    		if ($target_url != ''){
+	    			if ($this->redirect_type == 'permanent' || $this->redirect_type == 301){
+			    		header("HTTP/1.1 301 Moved Permanently");
+			    	}
+				    header("Location: ".$target_url);
+				    die();
+	    		}else{
+	    			$this->critical_error();
+	    		}
+	    	}else{
+	    		#if ($this->debug==1)die('Check_File stimmt nicht');
+	    	}
     	}
     }
 
