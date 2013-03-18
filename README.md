@@ -3,9 +3,9 @@ redirect_cache
 
 Redirect Cache Class for PHP
 
-      Autor: Andreas Höhne
+      Autor: Andreas Hoehne
       www.php-tuning.de / www.webdesign-hoehne.de
-      (c) 2013 Webdesign Höhne
+      (c) 2013 Webdesign Hoehne
 
 Install:
 
@@ -16,12 +16,12 @@ Install:
 3)    chmod 777 writeperm/redirect_cache
 
 4)    Place following Code in an general Include File:
-      
+
       include ('includes/modules/redirect_cache.class.php');
       $redirect_cache = new redirect_cache;
       $redirect_cache->do_redirect();
-  
+
 5)    Set $target_url directly before you start your header("Location: xxx"); and add following code:
-      
+
       $redirect_cache->write_cache($target_url);
-  
+
