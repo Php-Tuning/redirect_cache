@@ -47,12 +47,12 @@ class redirect_cache {
     }
 
     function set_cache_folder($folder = 'writeperm/redirect_cache/'){
-    	if (is_dir($folder)){
+    	#if (is_dir($folder)){
     		// 2do right check
     		$this->cache_folder = $folder;
-    	}else{
-    		$this->defect = 1;
-    	}
+    	#}else{
+    	#	$this->defect = 1;
+    	#}
     }
 
     function set_cache_time($cachetime = 2678400){
@@ -68,6 +68,8 @@ class redirect_cache {
     		if ($type == 'redir'){
     			die('Kritischer Umleitungsfehler, bitte besuchen Sie unsere Hauptseite: ' .
     			'<a href="http://'.$_SERVER['SERVER_NAME'].'/">'.$_SERVER['SERVER_NAME'].'</a>');
+    		}elseif ($type == 'defect'){
+    			die('Variablen defekt gesetzt');
     		}
     	}
     }
@@ -85,6 +87,8 @@ class redirect_cache {
 	    	}else{
 	    		$this->critical_error();
 	    	}
+    	}elseif ($this->defect == 1){
+    		$this->critical_error('defect');
     	}
     }
 
