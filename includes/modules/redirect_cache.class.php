@@ -43,7 +43,13 @@ class redirect_cache {
     }
 
     function set_debug($debug = 0){
-    	$this->debug = $debug;
+    	if ($debug === true){
+			$this->debug = 1;
+		}elseif ($debug === false){
+			$this->debug = 0;
+		}elseif ($debug != '' && ($debug == 0 || $debug == 1)){
+			$this->debug = $debug;
+		}
     }
 
     function set_cache_folder($folder = 'writeperm/redirect_cache/'){
