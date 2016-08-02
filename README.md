@@ -11,17 +11,15 @@ Install:
 
 1)    This Package should be installed in Root Dir, the class itself should be stored in includes/modules
 
-2)    chmod 777 writeperm
+2)    get sure you have write access to writeperm/redirect_cache
 
-3)    chmod 777 writeperm/redirect_cache
-
-4)    Place following Code in an general Include File:
+3)    Place following Code in an general Include File:
 
       include ('includes/modules/redirect_cache.class.php');
       $redirect_cache = new redirect_cache;
       $redirect_cache->do_redirect();
 
-5)    Set $target_url directly before you start your header("Location: xxx"); and add following code:
+4)    Set $target_url directly before you start your header("Location: xxx"); and add following code:
 
       $redirect_cache->write_cache($target_url);
 
