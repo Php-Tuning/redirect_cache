@@ -127,11 +127,11 @@ class redirect_cache {
     function do_redirect() {
         if ($this -> defect != 1) {
             $this -> request_hash();
-            if ($this -> check_file() === TRUE) {
+            if ($this -> check_file() == TRUE) {
                 $target_url = $this -> read_file();
                 if ($target_url != '') {
                     // Only redirect when no $_POST variables are set
-                    if (!isset($_POST)) {
+                    if (!isset($_POST) || (is_array($_POST) && count($_POST) == 0)) {
                         if ($this->redirect_type == 'permanent') {
                             header("HTTP/1.1 301 Moved Permanently");
                         } elseif ($this->redirect_type == 'temporary') {
